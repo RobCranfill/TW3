@@ -13,6 +13,5 @@ game I fondly recall from my yout (pronounced "yute").
 This is version 2.0a - there are several things I'd like to do to bring it up to snuff.
 See the GitHub bugtracker if you're interested or have something to add.
 
- - rob
- - 
+ </rob>
 
