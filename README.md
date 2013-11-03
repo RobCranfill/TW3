@@ -6,7 +6,7 @@ The Window That Will Trounce Wookies
 
 OK, that's not really what TW3 stands for. Can you tell me what it does stand for?
 
-TM3 is a game, played by two players at the same computer, or two players over a network,
+TW3 is a game, played by two players at the same computer, or two players over a network,
 that emulates - er, is inspired by - no, it just plain rips off - a classic "bookshelf" 
 game I fondly recall from my yout (pronounced "yute").
 
