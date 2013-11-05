@@ -43,7 +43,7 @@ public static final int STANDARD_BOARD_SIZE = 24;	// 24 in cannonical game
 
 // public vars
 
-transient iGUI GUI_;
+public iGUI GUI_;
 
 public int          boardSize_;    // board size includes home rows
 
@@ -128,15 +128,25 @@ static private Set<Link>  linkCheck_[];
 private int theWinner_ = -1;	// will set it to owner if a winner - Jan05
 
 
+
 /**
-    Contstructor
-**/
-public Model(iGUI theGUI) {
-
-    registerListener(theGUI);
-
-    boardSize_ = STANDARD_BOARD_SIZE;
+ * Constructor
+ **/
+public Model(iGUI theGUI)
+	{
+	this(theGUI, STANDARD_BOARD_SIZE);
 	}
+
+
+/**
+ * Constructor
+ **/
+public Model(iGUI theGUI, int boardSize)
+	{
+	registerListener(theGUI);
+	boardSize_ = boardSize;
+	}
+
 
 /**
     Start a new game.

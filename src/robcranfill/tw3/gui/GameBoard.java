@@ -28,25 +28,51 @@ private int FIELD_BORDER =  8;           // gap between edge and outermost holes
 private int CELL_SIZE    = 16;           // distance 'twixt holes
 
 
+/**
+ * Zero-arg constructor for IDE use.
+ */
+public GameBoard()
+	{
+	this(new Model(null, 10));
+	}
+
+
+/**
+ * 
+ * @param theModel
+ */
 public
 GameBoard(Model theModel_) {
 
     ourModel_ = theModel_;
     this.setBorder(new EtchedBorder());
-	} // constructor
+	}
+
 
 /**
     If this method doesn't exist, nothing gets painted. Weird.
 **/
 public Dimension
 getPreferredSize() {
-    return new Dimension(ourModel_.getBoardSize()*CELL_SIZE, ourModel_.getBoardSize()*CELL_SIZE);
+    return new Dimension(
+    	2*FIELD_BORDER + ourModel_.getBoardSize()*CELL_SIZE, 
+    	2*FIELD_BORDER + ourModel_.getBoardSize()*CELL_SIZE);
 	}
 
 
 public Dimension
 getMinimumSize() {
-    return new Dimension(ourModel_.getBoardSize()*CELL_SIZE, ourModel_.getBoardSize()*CELL_SIZE);
+    return new Dimension(
+    	2*FIELD_BORDER + ourModel_.getBoardSize()*CELL_SIZE, 
+    	2*FIELD_BORDER + ourModel_.getBoardSize()*CELL_SIZE);
+	}
+
+
+public Dimension
+getSize() {
+    return new Dimension(
+    	2*FIELD_BORDER + ourModel_.getBoardSize()*CELL_SIZE, 
+    	2*FIELD_BORDER + ourModel_.getBoardSize()*CELL_SIZE);
 	}
 
 

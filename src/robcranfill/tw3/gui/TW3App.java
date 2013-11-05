@@ -98,7 +98,7 @@ private JButton     buttonTurnDone_, buttonMessage_;
 private static String TOOL_TIP_BUTTON_DONE_YOUR_TURN     = "Press this when you're finished with your turn";
 private static String TOOL_TIP_BUTTON_DONE_NOT_YOUR_TURN = "(It's not your turn; wait for it)";
 
-private JTextArea   commText_;
+//private JTextArea   commText_;
 private JLabel      labelWhosTurnIsIt_, labelWhoYouAre_;
 private JMenuItem   menuItemNetwork_;   // so we can disable it
 

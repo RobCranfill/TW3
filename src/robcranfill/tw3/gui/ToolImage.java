@@ -50,13 +50,42 @@ ToolImage() {
     // this loads it asynchronously, and faster than with getImage by itself....
     // (as per Java Dev. Almanac, p16)
     //
-    image_ = new ImageIcon("legend2.png").getImage();
-    imageA_ = new ImageIcon("legend2a.png").getImage();
-    imageB_ = new ImageIcon("legend2b.png").getImage();
-    imageC_ = new ImageIcon("legend2c.png").getImage();
-    imageD_ = new ImageIcon("legend2d.png").getImage();
-    this.setBounds(0, 0, image_.getWidth(null), image_.getHeight(null));
+    image_  = loadImage("resources/legend2.png", "");
+    
+    imageA_ = loadImage("legend2a.png", "");
+    imageB_ = loadImage("legend2b.png", "");
+    imageC_ = loadImage("legend2c.png", "");
+    imageD_ = loadImage("legend2d.png", "");
+
+    if (image_ != null)
+    	{
+    	this.setBounds(0, 0, image_.getWidth(null), image_.getHeight(null));
+		}
 	}
+
+
+private Image loadImage(String path, String description)
+	{
+	java.net.URL imgURL = getClass().getResource(path);
+	ImageIcon ii = null;
+	if (imgURL != null)
+		{
+		ii = new ImageIcon(imgURL, description);
+		}
+	else
+		{
+		System.err.println("Couldn't find file: " + path);
+		return null;
+		}
+	int status = ii.getImageLoadStatus();
+	if (status != java.awt.MediaTracker.COMPLETE)
+		{
+		System.out.printf("load %s: %s\n", path, status);
+		return null;
+		}
+	return ii.getImage();
+	}
+
 
 public void
 paint2(Graphics g) {
