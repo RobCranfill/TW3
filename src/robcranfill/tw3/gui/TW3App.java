@@ -363,7 +363,7 @@ public void
 showMessage(String message) {
 
     // commText_.setText(commText_.getText() + message + "\n");
-    System.out.println("SHOW: " + message);
+    System.out.printf("SHOW: '%s' \n", message);
 	
 	}
 
@@ -813,18 +813,18 @@ playIntroSound() {
 private void
 loadAudio() {
 
-    acPeg_       = loadIt("file:peg.wav");
-    acLinkStart_ = loadIt("file:linkStart.wav");
-    acLinkEnd_   = loadIt("file:linkEnd.wav");
-    acBlocked_   = loadIt("file:blocked.wav");
-    acInitComm_  = loadIt("file:initComm.wav");
-    acAbout_     = loadIt("file:about.wav");
-    acIntro_     = loadIt("file:intro.wav");
+    acPeg_       = loadAudioClip("file:resources/peg.wav");
+    acLinkStart_ = loadAudioClip("file:resources/linkStart.wav");
+    acLinkEnd_   = loadAudioClip("file:resources/linkEnd.wav");
+    acBlocked_   = loadAudioClip("file:resources/blocked.wav");
+    acInitComm_  = loadAudioClip("file:resources/initComm.wav");
+    acAbout_     = loadAudioClip("file:resources/about.wav");
+    acIntro_     = loadAudioClip("file:resources/intro.wav");
 	}
 
 
 private AudioClip
-loadIt(String clipName) {
+loadAudioClip(String clipName) {
 
     AudioClip result = null;
     try {

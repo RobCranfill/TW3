@@ -47,15 +47,15 @@ setImageMode(int mode) {
 public
 ToolImage() {
 
-    // this loads it asynchronously, and faster than with getImage by itself....
+    // This loads images asynchronously, and faster than with getImage by itself.
     // (as per Java Dev. Almanac, p16)
     //
     image_  = loadImage("resources/legend2.png", "");
     
-    imageA_ = loadImage("legend2a.png", "");
-    imageB_ = loadImage("legend2b.png", "");
-    imageC_ = loadImage("legend2c.png", "");
-    imageD_ = loadImage("legend2d.png", "");
+    imageA_ = loadImage("resources/legend2a.png", "");
+    imageB_ = loadImage("resources/legend2b.png", "");
+    imageC_ = loadImage("resources/legend2c.png", "");
+    imageD_ = loadImage("resources/legend2d.png", "");
 
     if (image_ != null)
     	{
@@ -63,7 +63,12 @@ ToolImage() {
 		}
 	}
 
-
+/**
+ * Nicely wrapped to handle mysterious errors.
+ * @param path
+ * @param description
+ * @return
+ */
 private Image loadImage(String path, String description)
 	{
 	java.net.URL imgURL = getClass().getResource(path);
@@ -80,7 +85,7 @@ private Image loadImage(String path, String description)
 	int status = ii.getImageLoadStatus();
 	if (status != java.awt.MediaTracker.COMPLETE)
 		{
-		System.out.printf("load %s: %s\n", path, status);
+		System.out.printf("loadImage %s: getImageLoadStatus failed with java.awt.MediaTracker.%d\n", path, status);
 		return null;
 		}
 	return ii.getImage();

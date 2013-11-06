@@ -30,7 +30,7 @@ import javax.swing.JOptionPane;
 public class CommThing 
   implements iComm, Runnable {
 
-private iObjHandler       handler_;
+private iObjHandler       	handler_;
 private Thread              listenerThread_;
 private ObjectOutputStream  oos_;
 private boolean             connected_ = false;
@@ -86,7 +86,7 @@ processListen(Socket sock) {
 public boolean
 connectTo(String host, int port) {
 
-    System.out.println("connectTo: " + host + "@" + port + "....");
+    System.out.printf("connectTo %s:%d....\n", host, port);
     try {
         Socket sock = new Socket(host, port);
         oos_ = new ObjectOutputStream(sock.getOutputStream());
@@ -123,7 +123,7 @@ startListener(Socket sock) {
 public void
 sendObject(Object o) {
     
-    System.out.println("sendObject: sending " + o);
+    System.out.printf("sendObject: sending %s (type %s)..\n", o, o.getClass().getName());
     try {
         oos_.writeObject(o);
         oos_.flush();

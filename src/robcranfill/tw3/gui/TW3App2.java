@@ -21,15 +21,16 @@
 
 package robcranfill.tw3.gui;
 
-import java.applet.Applet;
-import java.applet.AudioClip;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
+import java.io.File;
 import java.util.Date;
 import java.util.Random;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 
 import robcranfill.tw3.*;
@@ -44,10 +45,20 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.border.BevelBorder;
 
-public class TW3App2 implements MouseInputListener, ActionListener, // standard
-																// interfaces
-	iObjHandler, iGUI, iConnectHandler // our interfaces
-{
+
+/**
+ * That Was The Week That Was!
+ * 
+ * @author cran
+ */
+public class TW3App2 implements 
+
+// standard interfaces
+	MouseInputListener, ActionListener,
+
+// our interfaces
+	iObjHandler, iGUI, iConnectHandler
+	{
 
 // The JFrame for the app:
 private JFrame				frame_;
@@ -83,34 +94,36 @@ private PlayerInfo players_[] =
 	};
 
 // Non-changeable names
-private String				playerColors_[]						= { "Red", "Blue" };								
+private String				playerColors_[] = { "Red", "Blue" };								
 
-private static final int	PLAYER_1							= 0;												// indices into players[], etc
+// indices into players[], etc
+private static final int	PLAYER_1 = 0;	
+private static final int	PLAYER_2 = 1;
 
-private static final int	PLAYER_2							= 1;
-private int					currentPlayerIndex_					= PLAYER_1;
+
 // for network games; does not denote order of play
-private int					thisPlayerIndex_					= PLAYER_1;
+private int					currentPlayerIndex_ = PLAYER_1;
+private int					thisPlayerIndex_ = PLAYER_1;
+
 
 // Comm
-private CommThing			commControl_						= null;
-private static String		SHUTDOWN_MESSAGE					= "OPPONENT IS SHUTTING DOWN. CRUMB!";
-private static String		NEWGAME_MESSAGE						= "OPPONENT SAYS 'NEW GAME'!";
-private static String		WIN_MESSAGE							= "OTHER PLAYER WON!";
+private CommThing			commControl_	 = null;
+private static String		SHUTDOWN_MESSAGE = "OPPONENT IS SHUTTING DOWN. CRUMB!";
+private static String		NEWGAME_MESSAGE	 = "OPPONENT SAYS 'NEW GAME'!";
+private static String		WIN_MESSAGE		 = "OTHER PLAYER WON!";
 
 // GUI things
-private static final int	CONTROL_PANEL_WIDTH					= 140;
-private static final int	BOARD_SIZE							= 392;
+private static final int	CONTROL_PANEL_WIDTH = 140;
+private static final int	BOARD_SIZE = 392;
 
-private static final int	MENU_FUDGE							= 56;												// and
-																													// window
-																													// title
-																													// bar,
-																													// too
-private static final int	BEVEL_FUDGE							= 4;												//
+// and window title bar, too
+private static final int	MENU_FUDGE = 56;
 
-private static final int	WINDOW_WIDTH						= CONTROL_PANEL_WIDTH + BOARD_SIZE + BEVEL_FUDGE;
-private static final int	WINDOW_HEIGHT						= BOARD_SIZE + MENU_FUDGE;
+
+private static final int	BEVEL_FUDGE = 4;
+
+private static final int	WINDOW_WIDTH = CONTROL_PANEL_WIDTH + BOARD_SIZE + BEVEL_FUDGE;
+private static final int	WINDOW_HEIGHT = BOARD_SIZE + MENU_FUDGE;
 
 private JButton				buttonTurnDone_, buttonMessage_;
 private static String		TOOL_TIP_BUTTON_DONE_YOUR_TURN		= "Press this when you're finished with your turn";
@@ -118,32 +131,33 @@ private static String		TOOL_TIP_BUTTON_DONE_NOT_YOUR_TURN	= "(It's not your turn
 
 // private JTextArea commText_;
 // private JLabel labelWhosTurnIsIt_, labelWhoYouAre_;
-private JMenuItem			menuItemNetwork_;																		// so
-																													// we
-																													// can
-																													// disable
-																													// it
 
-// pre-loaded audio
-private AudioClip			acPeg_, acLinkStart_, acLinkEnd_;
-private AudioClip			acBlocked_, acInitComm_, acAbout_, acIntro_;
+// so we can disable it
+private JMenuItem			menuItemNetwork_;	
 
-private TWPoint				linkStartPoint_						= null;											// gotta
-																													// hold
-																													// it
-																													// across
-																													// clicks
+// pre-loaded audio - removed in favor of non-Applet version
+//private AudioClip	acPeg_, acLinkStart_, acLinkEnd_;
+//private AudioClip	acBlocked_, acInitComm_, acAbout_, acIntro_;
 
-private ToolImage			toolImage_							= null;											// Jan05
+// audio version 2
+private Clip	clipPeg_, clipLinkStart_, clipLinkEnd_;
+private Clip	clipBlocked_, clipInitComm_, clipAbout_, clipIntro_;
 
-static String[]				randomNames_						= { "Bert Fegg", "Skanky", "Shakes, the Clown",
-		"Arthur", "Sniggendorf", "Jocko Homo", "Beatrice", "Scrotus", "Cleetus", "Arthur 'Two Sheds' Jackson",
-		"Throatwarbler Mangrove", "Bob"						};
-private JLabel				labelWhosTurnIsIt_;
-private JLabel				labelWhoYouAre_;
-private JPanel				controlPanel_;
-private JTextPane			txtpnMessages_;
-private JScrollPane 	scrollPane_;
+
+// gotta hold it across clicks
+private TWPoint linkStartPoint_ = null;
+
+// Jan05
+private ToolImage toolImage_ = null;	
+
+static String[] randomNames_ = {"Bert Fegg", "Skanky", "Shakes, the Clown", "Arthur", "Sniggendorf", "Jocko Homo", 
+		"Beatrice", "Scrotus", "Cleetus", "Arthur 'Two Sheds' Jackson", "Throatwarbler Mangrove", "Bob"};
+
+private JLabel labelWhosTurnIsIt_;
+private JLabel labelWhoYouAre_;
+private JPanel controlPanel_;
+private JTextPane txtpnMessages_;
+private JScrollPane scrollPane_;
 
 /**
  * Launch the application.
@@ -223,9 +237,9 @@ public TW3App2()
 
 	scrollPane_.setViewportView(txtpnMessages_);
 
-	JButton btnDone = new JButton("Done");
-	btnDone.setActionCommand("Done");
-	btnDone.addActionListener(new ActionListener()
+	buttonTurnDone_ = new JButton("Done");
+	buttonTurnDone_.setActionCommand("Done");
+	buttonTurnDone_.addActionListener(new ActionListener()
 		{
 		public void actionPerformed(ActionEvent ev)
 			{
@@ -234,8 +248,8 @@ public TW3App2()
 			}
 		});
 
-	JButton btnSendMessage = new JButton("Send Message");
-	btnSendMessage.setEnabled(false);
+	buttonMessage_ = new JButton("Send Message");
+	buttonMessage_.setEnabled(false);
 
 	labelWhosTurnIsIt_ = new JLabel("labelWhosTurnIsIt_");
 	labelWhoYouAre_ = new JLabel("labelWhoYouAre_");
@@ -254,14 +268,14 @@ public TW3App2()
 							.addGroup(
 								gl_controlPanel_
 										.createParallelGroup(Alignment.TRAILING, false)
-										.addComponent(btnDone, Alignment.LEADING, GroupLayout.DEFAULT_SIZE,
+										.addComponent(buttonTurnDone_, Alignment.LEADING, GroupLayout.DEFAULT_SIZE,
 											GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-										.addComponent(btnSendMessage, Alignment.LEADING, GroupLayout.DEFAULT_SIZE,
+										.addComponent(buttonMessage_, Alignment.LEADING, GroupLayout.DEFAULT_SIZE,
 											GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 							.addComponent(labelWhosTurnIsIt_).addComponent(labelWhoYouAre_)).addContainerGap()));
 	gl_controlPanel_.setVerticalGroup(gl_controlPanel_.createParallelGroup(Alignment.LEADING).addGroup(
-		gl_controlPanel_.createSequentialGroup().addContainerGap().addComponent(btnDone)
-				.addPreferredGap(ComponentPlacement.RELATED).addComponent(btnSendMessage)
+		gl_controlPanel_.createSequentialGroup().addContainerGap().addComponent(buttonTurnDone_)
+				.addPreferredGap(ComponentPlacement.RELATED).addComponent(buttonMessage_)
 				.addPreferredGap(ComponentPlacement.RELATED).addComponent(labelWhosTurnIsIt_)
 				.addPreferredGap(ComponentPlacement.RELATED).addComponent(labelWhoYouAre_)
 				.addPreferredGap(ComponentPlacement.UNRELATED)
@@ -271,18 +285,6 @@ public TW3App2()
 	frame_.getContentPane().setLayout(groupLayout);
 
 	frame_.setVisible(true); // we were created inviz; show ourselves.
-
-	// postInit();
-	//
-	// } // cons
-	//
-	//
-	//
-	// /**
-	// * After-GUI init.
-	// */
-	// private void postInit()
-	// {
 
 	// Create the play model
 	//
@@ -301,8 +303,12 @@ public TW3App2()
 	toolImagePanel.add(toolImage_);
 
 	doNew();
-	loadAudio();
-
+	
+	// WASSUP WTH AUDIO?
+//	play2("./introROOT.wav");
+	loadAudio2();
+	
+	
 	// Create the communications object
 	//
 	commControl_ = new CommThing(this); // this obj is the listener
@@ -344,10 +350,10 @@ private void initialize()
 	mntmNewLocalGame.setActionCommand("new");
 	mnFile.add(mntmNewLocalGame);
     
-	JMenuItem mntmNewNetworkGame = new JMenuItem("New Network Game...");
-	mntmNewNetworkGame.addActionListener(this);
-	mntmNewNetworkGame.setActionCommand("net");
-	mnFile.add(mntmNewNetworkGame);
+	menuItemNetwork_ = new JMenuItem("New Network Game...");
+	menuItemNetwork_.addActionListener(this);
+	menuItemNetwork_.setActionCommand("net");
+	mnFile.add(menuItemNetwork_);
   
 	JSeparator separator = new JSeparator();
 	mnFile.add(separator);
@@ -812,90 +818,147 @@ public void mouseMoved(java.awt.event.MouseEvent me)
 //
 private void playPegSound()
 	{
-	acPeg_.play();
+//	acPeg_.play();
+	playClip(clipPeg_);
 	}
 
 private void playLinkStartSound()
 	{
-	acLinkStart_.play();
+//	acLinkStart_.play();
+	playClip(clipLinkStart_);
 	}
 
 private void playLinkEndSound()
 	{
-	acLinkEnd_.play();
+//	acLinkEnd_.play();
+	playClip(clipLinkEnd_);
 	}
 
 private void playBlockedSound()
 	{
-	acBlocked_.play();
+//	acBlocked_.play();
+	playClip(clipBlocked_);
 	}
 
 private void playInitCommSound()
 	{
-	acInitComm_.play();
+//	acInitComm_.play();
+	playClip(clipInitComm_);
 	}
 
 private void playAboutSound()
 	{
-	acAbout_.play();
+//	acAbout_.play();
+	playClip(clipAbout_);
 	}
 
 private void playIntroSound()
 	{
-	acIntro_.play();
+//	acIntro_.play();
+	playClip(clipIntro_);
 	}
+
+//
+///**
+// * Pre-load the audio clips, for better performance (I assume)
+// **/
+//private void loadAudio()
+//	{
+//	acPeg_			= loadClip("file:resources/peg.wav");
+//	acLinkStart_	= loadClip("file:resources/linkStart.wav");
+//	acLinkEnd_		= loadClip("file:resources/linkEnd.wav");
+//	acBlocked_		= loadClip("file:resources/blocked.wav");
+//	acInitComm_		= loadClip("file:resources/initComm.wav");
+//	acAbout_		= loadClip("file:resources/about.wav");
+//	acIntro_		= loadClip("file:resources/intro.wav");
+//	}
+//
+//private AudioClip loadClip(String clipName)
+//	{
+//	AudioClip result = null;
+//	try
+//		{
+//		result = Applet.newAudioClip(new URL(clipName));
+//		}
+//	catch (Exception e)
+//		{
+//		System.out.println("*** Error loading sound clip '" + clipName + "'!");
+//		}
+//	return result;
+//	}
+
+
 
 /**
  * Pre-load the audio clips, for better performance (I assume)
  **/
-private void loadAudio()
+private void loadAudio2()
 	{
-
-	acPeg_ = loadIt("file:peg.wav");
-	acLinkStart_ = loadIt("file:linkStart.wav");
-	acLinkEnd_ = loadIt("file:linkEnd.wav");
-	acBlocked_ = loadIt("file:blocked.wav");
-	acInitComm_ = loadIt("file:initComm.wav");
-	acAbout_ = loadIt("file:about.wav");
-	acIntro_ = loadIt("file:intro.wav");
+	clipPeg_		= loadClip2("resources/peg.wav");
+	clipLinkStart_	= loadClip2("resources/linkStart.wav");
+	clipLinkEnd_	= loadClip2("resources/linkEnd.wav");
+	clipBlocked_	= loadClip2("resources/blocked.wav");
+	clipInitComm_	= loadClip2("resources/initComm.wav");
+	clipAbout_		= loadClip2("resources/about.wav");
+	clipIntro_		= loadClip2("resources/intro.wav");
 	}
 
-private AudioClip loadIt(String clipName)
-	{
 
-	AudioClip result = null;
+/**
+ * Load the clip from the indicated resource.
+ * http://stackoverflow.com/tags/javasound/info
+ */
+private Clip loadClip2(String path)
+	{
+	Clip clip = null;
 	try
 		{
-		result = Applet.newAudioClip(new URL(clipName));
+		AudioInputStream ais = AudioSystem.getAudioInputStream(new File(path));
+		clip = AudioSystem.getClip();
+		clip.open(ais);
 		}
 	catch (Exception e)
 		{
-		System.out.println("*** Error loading sound clip '" + clipName + "'!");
+		e.printStackTrace();
 		}
-	return result;
+	return clip;
 	}
+
+
+/**
+ * Play the loaded clip.
+ * @param clip
+ */
+private void playClip(Clip clip)
+	{
+	if (clip != null)
+		{
+		clip.setMicrosecondPosition(0);
+		clip.loop(0);
+		System.out.printf("playClip: %s \n", clip);
+		}
+	}
+
 
 /**
  * Send a message to our opponent.
  **/
 private void sendMessage()
 	{
-
 	if (commControl_.isConnected())
 		{
-
-		String message = JOptionPane.showInputDialog(frame_, "Enter your message", "Send a message",
-			JOptionPane.OK_CANCEL_OPTION);
+		String message = JOptionPane.showInputDialog(
+			frame_, "Enter your message", "Send a message", JOptionPane.OK_CANCEL_OPTION);
 
 		if (message == null)
 			{ // Cancel?
 			return;
 			}
-
 		AuxInfo info = new AuxInfo(message);
 		commControl_.sendObject(info);
 		}
 	}
+
 
 /**
  * doShutdown Verify that they really want to quit; kiss other player
@@ -966,7 +1029,7 @@ private void doNetDialog()
 	// Pick a random name to populate the default player name.
 	String defaultName = randomNames_[new Random().nextInt(randomNames_.length)];
 
-	NetDialog tnd = new NetDialog(frame_, (iConnectHandler) this, (iComm) commControl_, defaultName);
+	NetDialog tnd = new NetDialog(frame_, this, commControl_, defaultName);
 
 	// It's modal, and won't return till done.
 	//
@@ -1049,15 +1112,15 @@ private void enableMessageButton(boolean enabled)
  * @param text	If there are args, had better be printf-compatible.
  * 
  */
-private void appendMessage(String text, Object... args)
+private void appendMessage(String format, Object... args)
 	{
-	System.out.printf(text, args);
+	System.out.println(String.format(format, args));
 	try
 		{
 		Document doc = txtpnMessages_.getDocument();
 		doc.insertString(
 			doc.getLength(), 
-			String.format("\n%s: %s", new Date(), String.format(text, args)),
+			String.format("\n%s: %s", new Date(), String.format(format, args)),
 			null);
 		scrollPane_.scrollRectToVisible(new Rectangle(0, txtpnMessages_.getBounds(null).height, 1, 1));
 		}
