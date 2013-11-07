@@ -58,7 +58,7 @@ private int					homeRow_[][];				// a slight duplication: the leftmost and topmo
 private boolean				linkArray_[][][];
 
 // and a list of the same links, for fast redraw:
-private Vector<Link>		linkList_;
+private List<Link>		linkList_;
 
 // Table for determining obstruction.
 // * First index is which direction your proposed new link is going;
@@ -121,6 +121,22 @@ public Model(iGUI theGUI, int boardSize)
 	{
 	registerListener(theGUI);
 	boardSize_ = boardSize;
+
+	linkList_ = new Vector<Link>(0);
+	initPegs();
+	}
+
+
+private void initPegs()
+	{
+	pegs_ = new int[boardSize_][boardSize_];
+	for (int i = 0; i < boardSize_; i++)
+		{
+		for (int j = 0; j < boardSize_; j++)
+			{
+			pegs_[i][j] = OPEN_PEG;
+			}
+		}
 	}
 
 /**
@@ -130,14 +146,7 @@ public void newGame()
 	{
 	System.out.println("Model.newGame()");
 
-	pegs_ = new int[boardSize_][boardSize_];
-	for (int i = 0; i < boardSize_; i++)
-		{
-		for (int j = 0; j < boardSize_; j++)
-			{
-			pegs_[i][j] = OPEN_PEG;
-			}
-		}
+	initPegs();
 
 	// The four forbidden corners
 	//
@@ -293,7 +302,7 @@ public void setLink(TWPoint startPoint, TWPoint endPoint, int direction, int own
 		return;
 	linkArray_[startPoint.x][startPoint.y][direction] = true;
 	Link newLink = new Link(owner, startPoint, endPoint);
-	linkList_.addElement(newLink);
+	linkList_.add(newLink);
 	System.out.println("setLink added " + startPoint + ", " + endPoint + " @ " + direction);
 	touch();
 
@@ -360,7 +369,7 @@ public int getWinner()
 /**
  * Should this just be a public var?
  **/
-public Vector<Link> getLinks()
+public List<Link> getLinks()
 	{
 	return linkList_;
 	}

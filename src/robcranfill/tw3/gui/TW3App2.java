@@ -40,6 +40,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.MouseInputListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -113,7 +114,7 @@ private static String		NEWGAME_MESSAGE	 = "OPPONENT SAYS 'NEW GAME'!";
 private static String		WIN_MESSAGE		 = "OTHER PLAYER WON!";
 
 // GUI things
-private static final int	CONTROL_PANEL_WIDTH = 140;
+//private static final int	CONTROL_PANEL_WIDTH = 140;
 private static final int	BOARD_SIZE = 392;
 
 // and window title bar, too
@@ -122,8 +123,11 @@ private static final int	MENU_FUDGE = 56;
 
 private static final int	BEVEL_FUDGE = 4;
 
-private static final int	WINDOW_WIDTH = CONTROL_PANEL_WIDTH + BOARD_SIZE + BEVEL_FUDGE;
-private static final int	WINDOW_HEIGHT = BOARD_SIZE + MENU_FUDGE;
+//private static final int	WINDOW_WIDTH  = CONTROL_PANEL_WIDTH + BOARD_SIZE + BEVEL_FUDGE;
+//private static final int	WINDOW_HEIGHT = BOARD_SIZE + MENU_FUDGE;
+private static final int	WINDOW_WIDTH  = 204 + BOARD_SIZE + BEVEL_FUDGE;
+private static final int	WINDOW_HEIGHT = 120 + BOARD_SIZE + MENU_FUDGE;
+
 
 private JButton				buttonTurnDone_, buttonMessage_;
 private static String		TOOL_TIP_BUTTON_DONE_YOUR_TURN		= "Press this when you're finished with your turn";
@@ -164,6 +168,24 @@ private JScrollPane scrollPane_;
  */
 public static void main(String[] args)
 	{
+	
+	// Use the 'Nimbus' 'look and feel'.
+	try
+		{
+		for (LookAndFeelInfo info: UIManager.getInstalledLookAndFeels())
+			{
+			if ("Nimbus".equals(info.getName()))
+				{
+				UIManager.setLookAndFeel(info.getClassName());
+				break;
+				}
+			}
+		}
+	catch (Exception e)
+		{
+		// If Nimbus is not available, you can set the GUI to another look and feel.
+		}
+	
 	EventQueue.invokeLater(new Runnable()
 		{
 			public void run()
@@ -196,36 +218,36 @@ public TW3App2()
 	msgPanel.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 
 	JPanel gamePanel = new JPanel();
+	
+	gamePanel.setPreferredSize(new Dimension(400, 400));
+	gamePanel.setSize(new Dimension(400, 400));
+	gamePanel.setMinimumSize(new Dimension(400, 400));
+	
 	gamePanel.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 	GroupLayout groupLayout = new GroupLayout(frame_.getContentPane());
-	groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
-		groupLayout
-				.createSequentialGroup()
+	groupLayout.setHorizontalGroup(
+		groupLayout.createParallelGroup(Alignment.LEADING)
+			.addGroup(groupLayout.createSequentialGroup()
 				.addContainerGap()
 				.addComponent(controlPanel_, GroupLayout.PREFERRED_SIZE, 146, GroupLayout.PREFERRED_SIZE)
 				.addPreferredGap(ComponentPlacement.RELATED)
-				.addGroup(
-					groupLayout.createParallelGroup(Alignment.LEADING)
-							.addComponent(msgPanel, GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)
-							.addComponent(gamePanel, GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE))
-				.addContainerGap()));
-	groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
-		groupLayout
-				.createSequentialGroup()
+				.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+					.addComponent(msgPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addComponent(gamePanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+				.addContainerGap(22, Short.MAX_VALUE))
+	);
+	groupLayout.setVerticalGroup(
+		groupLayout.createParallelGroup(Alignment.LEADING)
+			.addGroup(groupLayout.createSequentialGroup()
 				.addContainerGap()
-				.addGroup(
-					groupLayout
-							.createParallelGroup(Alignment.LEADING)
-							.addComponent(controlPanel_, GroupLayout.PREFERRED_SIZE, 273,
-								GroupLayout.PREFERRED_SIZE)
-							.addGroup(
-								groupLayout
-										.createSequentialGroup()
-										.addComponent(msgPanel, GroupLayout.PREFERRED_SIZE, 94,
-											GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(gamePanel, GroupLayout.PREFERRED_SIZE, 383,
-											GroupLayout.PREFERRED_SIZE))).addGap(62)));
+				.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+					.addComponent(controlPanel_, GroupLayout.PREFERRED_SIZE, 273, GroupLayout.PREFERRED_SIZE)
+					.addGroup(groupLayout.createSequentialGroup()
+						.addComponent(msgPanel, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(gamePanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+				.addContainerGap(47, Short.MAX_VALUE))
+	);
 	msgPanel.setLayout(new BorderLayout(0, 0));
 
 	scrollPane_ = new JScrollPane();
@@ -303,13 +325,10 @@ public TW3App2()
 	toolImagePanel.add(toolImage_);
 
 	doNew();
-	
-	// WASSUP WTH AUDIO?
-//	play2("./introROOT.wav");
 	loadAudio2();
+
 	
-	
-	// Create the communications object
+	// Create the communications object XXX or do this later?
 	//
 	commControl_ = new CommThing(this); // this obj is the listener
 	(new Thread(commControl_)).start();
@@ -325,8 +344,8 @@ private void initialize()
 	{
 	frame_ = new JFrame("TW3 3.0a");
 
-	frame_.setBounds(200, 100, 465, 600);
-	frame_.setSize(719, 615);
+	frame_.setSize(581, 574);
+	frame_.setResizable(false);
 
 	// Center ourself on the screen.
 	//
@@ -335,7 +354,7 @@ private void initialize()
 	int h = frame_.getSize().height;
 	int x = (screen.width - w) / 2;
 	int y = (screen.height - h) / 3; // 1/3rd from top, actually
-	frame_.setBounds(x, y, w, h);
+	frame_.setLocation(x, y);
 
 	frame_.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -1042,13 +1061,15 @@ private void doNetDialog()
 	}
 
 
-
+/**
+ * Show the 'about box'.
+ */
 private void doAbout()
 	{
 	playAboutSound();
 
 	JDialog jd = new JDialog(frame_, "About TW3", true);
-	jd.setSize(new Dimension(256, 256 + 34)); // fudge for titlebar and menu
+	jd.setSize(new Dimension(256, 256 + 28)); // fudge for titlebar and menu
 
 	// Center ourself on the screen.
 	//
@@ -1067,6 +1088,7 @@ private void doAbout()
 
 	jd.setVisible(true);
 	}
+
 
 /**
  * Start a new game.

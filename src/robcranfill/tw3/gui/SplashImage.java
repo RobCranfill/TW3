@@ -37,7 +37,7 @@ public SplashImage() {
     // this load it asynchronously, and faster than with getImage by itself....
     // (as per Java Dev. Almanac, p16)
     //
-    image_ = new ImageIcon("splash.gif").getImage();
+    image_ = new ImageIcon("resources/splash.gif").getImage();
 	}
 
 public void
